@@ -1,13 +1,15 @@
-using UnityEngine;
+﻿using UnityEngine;
 
 public class PlayerInteractor : MonoBehaviour
 {
+    [Header("Interaction Settings")]
     [SerializeField] private float interactDistance = 3f;
-    [SerializeField] private LayerMask interactLayer;
+    [SerializeField] private LayerMask fullBlockingLayer; // All colliders, including walls, doors, etc.
+
     [SerializeField] private KeyCode interactKey = KeyCode.E;
 
     private Camera cam;
-    private ISwitchTarget currentTarget;
+    private IInteractable currentTarget;
 
     private void Awake()
     {
@@ -17,25 +19,23 @@ public class PlayerInteractor : MonoBehaviour
     private void Update()
     {
         Ray ray = new Ray(cam.transform.position, cam.transform.forward);
-        if (Physics.Raycast(ray, out RaycastHit hit, interactDistance, interactLayer))
+
+        if (Physics.Raycast(ray, out RaycastHit hit, interactDistance, fullBlockingLayer))
         {
-            currentTarget = hit.collider.GetComponent<ISwitchTarget>();
-            if (currentTarget != null)
+            if (hit.collider.TryGetComponent<IInteractable>(out var interactable))
             {
-                SwitchPromptUI.Instance.ShowPrompt(true); // show UI
+                currentTarget = interactable;
+
+                SwitchPromptUI.Instance.ShowPrompt(true, currentTarget.GetPrompt());
 
                 if (Input.GetKeyDown(interactKey))
-                    currentTarget.Activate();
-            }
-            else
-            {
-                SwitchPromptUI.Instance.ShowPrompt(false);
+                    currentTarget.Interact();
+
+                return;
             }
         }
-        else
-        {
-            currentTarget = null;
-            SwitchPromptUI.Instance.ShowPrompt(false);
-        }
+
+        currentTarget = null;
+        SwitchPromptUI.Instance.ShowPrompt(false);
     }
 }
