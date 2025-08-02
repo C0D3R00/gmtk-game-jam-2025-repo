@@ -8,10 +8,10 @@ public class LockedDoor : InteractableDoor
 
     private bool isUnlocked = false;
 
-    public override void Interact()
+    public override void Interact(GameObject interactor)
     {
         if (isUnlocked || TryUnlock())
-            base.Interact();
+            base.Interact(interactor);
         else
             Debug.Log("🔒 Door is locked.");
     }

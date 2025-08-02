@@ -18,7 +18,6 @@ public class PlayerReplayer : MonoBehaviour
         if (frames == null) return;
 
         currentTime += Time.deltaTime;
-
         if (frameIndex < frames.Count && frames[frameIndex].time <= currentTime)
         {
             var frame = frames[frameIndex];
@@ -43,14 +42,15 @@ public class PlayerReplayer : MonoBehaviour
     private void TriggerInteraction(PlayerInteractionEvent interaction)
     {
         GameObject target = GameObject.Find(interaction.targetId);
-        if (target && target.TryGetComponent<IReplayInteractable>(out var replayable))
+        if (target && target.TryGetComponent<IReplayable>(out var replayable))
         {
-            replayable.ReplayInteract(interaction.action);
+            replayable.ReplayAction(interaction.action);
         }
     }
 
     public void BeginPlayback(List<PlayerActionFrame> f, List<PlayerInteractionEvent> e)
     {
+        Debug.Log($"begin playback frames.count: {f.Count}");
         frames = f;
         events = e;
         currentTime = 0f;

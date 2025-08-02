@@ -6,9 +6,15 @@ public class InteractableDoor : DoorBase, IInteractable
     [SerializeField] private string openPrompt = "Open Door";
     [SerializeField] private string closePrompt = "Close Door";
 
-    public virtual void Interact()
+    public virtual void Interact(GameObject interactor)
     {
         Toggle();
+
+        var recorder = interactor.GetComponent<PlayerRecorder>();
+        if (recorder != null && recorder.isRecording)
+        {
+            recorder.RecordInteraction(this.name, isOpen ? "open" : "close");
+        }
     }
 
     public virtual string GetPrompt()

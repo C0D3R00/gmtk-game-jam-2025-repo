@@ -29,7 +29,7 @@ public class PlayerInteractor : MonoBehaviour
                 SwitchPromptUI.Instance.ShowPrompt(true, currentTarget.GetPrompt());
 
                 if (Input.GetKeyDown(interactKey))
-                    currentTarget.Interact();
+                    currentTarget.Interact(this.gameObject);
 
                 return;
             }

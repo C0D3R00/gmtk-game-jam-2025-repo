@@ -6,9 +6,8 @@ public class PlayerActionFrame
     public float time;
     public Vector2 moveInput;
     public Vector2 lookInput;
-
     public bool jump;
     public bool interact;
     public bool crouch;
-    // Add whatever actions your game has
+    public bool sprint;
 }

@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Cinemachine;
 
 public class LoopMaster : MonoBehaviour
 {
@@ -9,6 +10,10 @@ public class LoopMaster : MonoBehaviour
     [Header("Loop Settings")]
     [SerializeField] private float loopDuration = 60f;
     [SerializeField] private List<PlayerController> players; // Player1, Player2, Player3...
+    [SerializeField] private string cameraAnchorName = "CameraAnchor";
+
+    [Header("Camera")]
+    [SerializeField] private CinemachineVirtualCamera virtualCam;
 
     private List<List<PlayerActionFrame>> frameHistory = new();
     private List<List<PlayerInteractionEvent>> interactionHistory = new();
@@ -17,6 +22,8 @@ public class LoopMaster : MonoBehaviour
     private float loopTimer;
     private bool loopRunning = false;
     private bool puzzleSolved = false;
+
+    private Camera mainCam;
 
     private void Awake()
     {
@@ -31,6 +38,13 @@ public class LoopMaster : MonoBehaviour
 
     private void Start()
     {
+        mainCam = Camera.main;
+        StartCoroutine(DelayedStart());
+    }
+
+    private IEnumerator DelayedStart()
+    {
+        yield return new WaitForSeconds(0.1f);
         StartLoop();
     }
 
@@ -60,7 +74,10 @@ public class LoopMaster : MonoBehaviour
 
             if (i == activeIndex)
             {
+                Debug.Log($"player.name: {player.name}");
                 player.EnableControl();
+                SetActiveAudioListener(player);
+                MoveCameraToPlayer(player);
             }
             else if (i < frameHistory.Count)
             {
@@ -72,6 +89,36 @@ public class LoopMaster : MonoBehaviour
             {
                 player.DisableAll();
             }
+        }
+    }
+
+    private void MoveCameraToPlayer(PlayerController player)
+    {
+        var anchor = player.transform.Find(cameraAnchorName);
+        if (anchor == null)
+        {
+            Debug.LogWarning($"No CameraAnchor found on {player.name}");
+            return;
+        }
+
+        if (virtualCam != null)
+        {
+            virtualCam.Follow = anchor;
+            virtualCam.LookAt = anchor;
+        }
+        else if (mainCam != null)
+        {
+            mainCam.transform.SetParent(anchor);
+            mainCam.transform.localPosition = Vector3.zero;
+            mainCam.transform.localRotation = Quaternion.identity;
+        }
+    }
+    private void SetActiveAudioListener(PlayerController player)
+    {
+        foreach (var pc in players)
+        {
+            var listener = pc.GetComponentInChildren<AudioListener>();
+            if (listener) listener.enabled = (pc == player);
         }
     }
 
@@ -88,7 +135,6 @@ public class LoopMaster : MonoBehaviour
 
         frameHistory.Add(new List<PlayerActionFrame>(recorder.recordedFrames));
         interactionHistory.Add(new List<PlayerInteractionEvent>(recorder.interactionEvents));
-
         recorder.ClearRecording();
 
         currentLoop++;

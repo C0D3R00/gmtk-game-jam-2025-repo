@@ -15,10 +15,19 @@ public class PlayerRecorder : MonoBehaviour
     public Vector2 currentMoveInput;
     public Vector2 currentLookInput;
 
-    public void SetInput(Vector2 move, Vector2 look)
+    public bool currentJump;
+    public bool currentInteract;
+    public bool currentSprint;
+    public bool currentCrouch;
+
+    public void SetInput(Vector2 move, Vector2 look, bool jump, bool interact, bool sprint, bool crouch)
     {
         currentMoveInput = move;
         currentLookInput = look;
+        currentJump = jump;
+        currentInteract = interact;
+        currentSprint = sprint;
+        currentCrouch = crouch;
     }
 
     private void Update()
@@ -35,11 +44,13 @@ public class PlayerRecorder : MonoBehaviour
                 time = timeElapsed,
                 moveInput = currentMoveInput,
                 lookInput = currentLookInput,
-                jump = false, // TODO: hook jump input if needed
-                interact = false,
-                crouch = false
+                jump = currentJump,
+                interact = currentInteract,
+                crouch = currentCrouch,
+                sprint = currentSprint
             });
 
+            Debug.Log($"timeElapsed: {timeElapsed} currentMoveInput: {currentMoveInput} currentLookInput: {currentLookInput}");
             timer = 0f;
         }
     }

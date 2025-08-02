@@ -1,19 +1,33 @@
 ﻿using UnityEngine;
 
-public class KeyPickup : MonoBehaviour, IInteractable
+public class KeyPickup : MonoBehaviour, IReplayable
 {
-    [SerializeField] private string keyId = "gold_key";
-    [SerializeField] private string promptText = "Pick up key";
+    [SerializeField] private string keyId = "Key_001";
+    public string Id => keyId;
 
-    public void Interact()
+    private void Awake()
     {
-        InventoryManager.Instance.AddKey(keyId);
-        Debug.Log($"🔑 Picked up key: {keyId}");
-        Destroy(gameObject); // remove key from world
+        InteractableRegistry.Register(keyId, this);
     }
 
-    public string GetPrompt()
+    public void ReplayAction(string action)
     {
-        return promptText;
+        if (action == "pickup")
+        {
+            // Simulate pickup (e.g., hide from ghost player)
+            gameObject.SetActive(false);
+        }
+    }
+
+    public void OnInteract(GameObject player)
+    {
+        // Normal interaction logic...
+        var recorder = player.GetComponent<PlayerRecorder>();
+        if (recorder != null && recorder.isRecording)
+        {
+            recorder.RecordInteraction(Id, "pickup");
+        }
+
+        gameObject.SetActive(false);
     }
 }
