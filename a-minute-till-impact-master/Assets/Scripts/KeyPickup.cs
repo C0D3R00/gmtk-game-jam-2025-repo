@@ -23,7 +23,7 @@ public class KeyPickup : MonoBehaviour, IReplayable
     {
         // Normal interaction logic...
         var recorder = player.GetComponent<PlayerRecorder>();
-        if (recorder != null && recorder.isRecording)
+        if (recorder != null && recorder.IsRecording)
         {
             recorder.RecordInteraction(Id, "pickup");
         }

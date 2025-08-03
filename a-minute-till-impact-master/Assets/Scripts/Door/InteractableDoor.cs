@@ -11,7 +11,7 @@ public class InteractableDoor : DoorBase, IInteractable
         Toggle();
 
         var recorder = interactor.GetComponent<PlayerRecorder>();
-        if (recorder != null && recorder.isRecording)
+        if (recorder != null && recorder.IsRecording)
         {
             recorder.RecordInteraction(this.name, isOpen ? "open" : "close");
         }

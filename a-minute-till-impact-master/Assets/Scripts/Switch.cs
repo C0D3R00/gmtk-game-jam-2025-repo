@@ -24,7 +24,7 @@ public class Switch : MonoBehaviour, IInteractable, IReplayable
         Toggle();
 
         var recorder = interactor.GetComponent<PlayerRecorder>();
-        if (recorder != null && recorder.isRecording)
+        if (recorder != null && recorder.IsRecording)
         {
             recorder.RecordInteraction(Id, isOn ? "on" : "off");
         }

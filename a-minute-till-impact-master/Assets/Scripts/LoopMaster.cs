@@ -39,6 +39,13 @@ public class LoopMaster : MonoBehaviour
     private void Start()
     {
         mainCam = Camera.main;
+
+        // 🧠 Set initial checkpoints for all players
+        foreach (var player in players)
+        {
+            player.SetCheckpoint();
+        }
+
         StartCoroutine(DelayedStart());
     }
 
@@ -72,9 +79,12 @@ public class LoopMaster : MonoBehaviour
         {
             var player = players[i];
 
+            // 🧠 Reset player to saved checkpoint
+            player.ResetToCheckpoint();
+
             if (i == activeIndex)
             {
-                Debug.Log($"player.name: {player.name}");
+                Debug.Log($"▶️ Controlling: {player.name}");
                 player.EnableControl();
                 SetActiveAudioListener(player);
                 MoveCameraToPlayer(player);
@@ -97,7 +107,7 @@ public class LoopMaster : MonoBehaviour
         var anchor = player.transform.Find(cameraAnchorName);
         if (anchor == null)
         {
-            Debug.LogWarning($"No CameraAnchor found on {player.name}");
+            Debug.LogWarning($"⚠️ No CameraAnchor found on {player.name}");
             return;
         }
 
@@ -113,6 +123,7 @@ public class LoopMaster : MonoBehaviour
             mainCam.transform.localRotation = Quaternion.identity;
         }
     }
+
     private void SetActiveAudioListener(PlayerController player)
     {
         foreach (var pc in players)

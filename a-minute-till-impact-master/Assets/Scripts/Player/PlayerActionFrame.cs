@@ -10,4 +10,7 @@ public class PlayerActionFrame
     public bool interact;
     public bool crouch;
     public bool sprint;
+
+    public Vector3? worldPosition;
+    public Quaternion? worldRotation;
 }
