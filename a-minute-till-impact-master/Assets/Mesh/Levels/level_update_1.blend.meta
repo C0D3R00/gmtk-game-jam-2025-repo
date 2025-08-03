@@ -3,7 +3,67 @@ guid: 4fb4ee3ce788ce547b677459bcf8f2a8
 ModelImporter:
   serializedVersion: 22200
   internalIDToNameTable: []
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: MatRoom1
+    second: {fileID: 2100000, guid: 437092d626a81cd4a97f1b0b3752b413, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Mat_2floor_glasswall
+    second: {fileID: 2100000, guid: 8948a5ca23299fd44bdc805ede2d3632, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Mat_Door1_frame
+    second: {fileID: 2100000, guid: 8b05b5a891b71d04689c8c48a94422f3, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Mat_Door2_frame
+    second: {fileID: 2100000, guid: bdd5cff63eafb6f40893400860935cda, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Mat_Door3_frame
+    second: {fileID: 2100000, guid: 71cdae2cc3288a04086f38a4be2523c9, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Mat_Elev_SafeRail
+    second: {fileID: 2100000, guid: 3350d0872fa50df49bf01c485cd802fc, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Mat_PresPlate_outer
+    second: {fileID: 2100000, guid: e5b19d0d6de50734dba7bd047a69c00e, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Material
+    second: {fileID: 2100000, guid: e7f0bf146b63cba42b1d6ceef5f9b952, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Material.001
+    second: {fileID: 2100000, guid: a22025b3703cbe449a8cc31bfa2c5e8c, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: glasswall
+    second: {fileID: 2100000, guid: 923aba63b8cba0a44ac13101ed253b6c, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: grey
+    second: {fileID: 2100000, guid: d0c3e766f54a1454fa81dc59b6691a41, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: lightmetal
+    second: {fileID: 2100000, guid: c09fd7f4d5713f34788fbb4972604aae, type: 2}
   materials:
     materialImportMode: 2
     materialName: 0
@@ -46,7 +106,7 @@ ModelImporter:
     nodeNameCollisionStrategy: 1
     fileIdsGeneration: 2
     swapUVChannels: 0
-    generateSecondaryUV: 0
+    generateSecondaryUV: 1
     useFileUnits: 1
     keepQuads: 0
     weldVertices: 1
