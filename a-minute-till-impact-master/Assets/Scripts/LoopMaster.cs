@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Cinemachine;
+using TMPro;
 
 public class LoopMaster : MonoBehaviour
 {
@@ -11,6 +12,7 @@ public class LoopMaster : MonoBehaviour
     [SerializeField] private float loopDuration = 60f;
     [SerializeField] private List<PlayerController> players;
     [SerializeField] private string cameraAnchorName = "CameraAnchor";
+    [SerializeField] private TMP_Text countdownTmp;
 
     [Header("Camera")]
     [SerializeField] private CinemachineVirtualCamera virtualCam;
@@ -56,6 +58,8 @@ public class LoopMaster : MonoBehaviour
         if (!loopRunning || puzzleSolved) return;
 
         loopTimer -= Time.deltaTime;
+        int secondsLeft = Mathf.FloorToInt(loopTimer);
+        countdownTmp.text = $"00:<color=red>{secondsLeft}</color>";
         if (loopTimer <= 0)
         {
             EndLoop();
@@ -73,6 +77,7 @@ public class LoopMaster : MonoBehaviour
 
         LoopReplayerSystem.Instance.ClearReplays();
         ResettableRegistry.ResetAll();
+        DialogueManager.Instance.PlayNextDialogue();
 
         for (int i = 0; i < players.Count; i++)
         {
