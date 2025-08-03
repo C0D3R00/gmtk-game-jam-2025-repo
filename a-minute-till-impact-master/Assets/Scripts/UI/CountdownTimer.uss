@@ -1,0 +1,17 @@
+.timer-container {
+    position: absolute;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    width: auto;
+    height: auto;
+}
+
+.countdown-label {
+    font-size: 48px;
+    color: white;
+    unity-font-style: bold;
+}
