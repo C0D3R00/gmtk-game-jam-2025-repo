@@ -1071,7 +1071,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7d0178310a5e1c44aaccdf8ce94f3f60, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  loopDuration: 3
+  loopDuration: 60
   players:
   - {fileID: 1155834773}
   - {fileID: 1720403432}
