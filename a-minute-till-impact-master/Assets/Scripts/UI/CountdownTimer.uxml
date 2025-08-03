@@ -1,0 +1,7 @@
+<UXML xmlns="UnityEngine.UIElements" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements">
+    <Style src="CountdownTimer.uss" />
+
+    <ui:VisualElement name="timer-container" class="timer-container">
+        <ui:Label name="countdown-label" text="01:00" class="countdown-label" />
+    </ui:VisualElement>
+</UXML>
