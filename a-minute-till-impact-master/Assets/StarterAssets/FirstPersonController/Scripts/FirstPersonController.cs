@@ -85,7 +85,7 @@ namespace StarterAssets
         private void Update()
         {
             if (!_inputEnabled) return;
-            Debug.Log($"{this.name} - _inputEnabled: {_inputEnabled}");
+
             JumpAndGravity();
             GroundedCheck();
             Move();
