@@ -8,12 +8,7 @@ ModelImporter:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
       name: MatRoom1
-    second: {fileID: 2100000, guid: 437092d626a81cd4a97f1b0b3752b413, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: Mat_2floor_glasswall
-    second: {fileID: 2100000, guid: 8948a5ca23299fd44bdc805ede2d3632, type: 2}
+    second: {fileID: 2100000, guid: d0c3e766f54a1454fa81dc59b6691a41, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
@@ -38,12 +33,12 @@ ModelImporter:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
       name: Mat_PresPlate_outer
-    second: {fileID: 2100000, guid: e5b19d0d6de50734dba7bd047a69c00e, type: 2}
+    second: {fileID: 2100000, guid: 36e1853c9c7bcc7498115bc113f48624, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
-      name: Material
-    second: {fileID: 2100000, guid: e7f0bf146b63cba42b1d6ceef5f9b952, type: 2}
+      name: Mat_floor
+    second: {fileID: 2100000, guid: 2e03a0fcec0b4164c8d2f8df5fe82b05, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
@@ -52,18 +47,28 @@ ModelImporter:
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
+      name: Material.002
+    second: {fileID: 2100000, guid: e7f0bf146b63cba42b1d6ceef5f9b952, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Wall
+    second: {fileID: 2100000, guid: 349680f3fc81fe34ba2f0c999fde1d02, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
       name: glasswall
     second: {fileID: 2100000, guid: 923aba63b8cba0a44ac13101ed253b6c, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
-      name: grey
-    second: {fileID: 2100000, guid: d0c3e766f54a1454fa81dc59b6691a41, type: 2}
+      name: lightmetal
+    second: {fileID: 2100000, guid: c09fd7f4d5713f34788fbb4972604aae, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
-      name: lightmetal
-    second: {fileID: 2100000, guid: c09fd7f4d5713f34788fbb4972604aae, type: 2}
+      name: metal
+    second: {fileID: 2100000, guid: b3ea44bf6f9cbf44783e696f376b7076, type: 2}
   materials:
     materialImportMode: 2
     materialName: 0

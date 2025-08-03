@@ -3,7 +3,22 @@ guid: 9991329a3d9bd9d4097a023b63895439
 ModelImporter:
   serializedVersion: 22200
   internalIDToNameTable: []
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: mat_player_body
+    second: {fileID: 2100000, guid: fe31e077c1d079d4394ab80ca727404f, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: mat_player_hair
+    second: {fileID: 2100000, guid: 1776f0f62f878574fb5aef09f2665857, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: mat_player_head
+    second: {fileID: 2100000, guid: b27042fe26f751e4d9413334c6797ca3, type: 2}
   materials:
     materialImportMode: 2
     materialName: 0
@@ -46,7 +61,7 @@ ModelImporter:
     nodeNameCollisionStrategy: 1
     fileIdsGeneration: 2
     swapUVChannels: 0
-    generateSecondaryUV: 0
+    generateSecondaryUV: 1
     useFileUnits: 1
     keepQuads: 0
     weldVertices: 1
