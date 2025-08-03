@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 public class LoopReplayerSystem : MonoBehaviour
@@ -10,6 +10,11 @@ public class LoopReplayerSystem : MonoBehaviour
         public GameObject player;
         public List<TransformFrame> transformFrames;
         public List<InteractionFrame> interactionFrames;
+        public List<AnimationFrame> animationFrames;
+
+        public Animator animator;
+
+        public int animationIndex = 0;
         public float startTime;
         public int transformIndex = 0;
         public int interactionIndex = 0;
@@ -31,7 +36,7 @@ public class LoopReplayerSystem : MonoBehaviour
         Instance = this;
     }
 
-    private void Update()
+    private void FixedUpdate()
     {
         float now = Time.time;
 
@@ -76,13 +81,28 @@ public class LoopReplayerSystem : MonoBehaviour
                 target?.ReplayAction(frame.action);
                 replay.interactionIndex++;
             }
+
+            // Play animation if timestamp reached
+            while (replay.animationIndex < replay.animationFrames.Count &&
+                   replay.animationFrames[replay.animationIndex].timestamp <= t)
+            {
+                var animFrame = replay.animationFrames[replay.animationIndex];
+                replay.animator?.SetInteger("animState", animFrame.state);
+                replay.animationIndex++;
+            }
         }
     }
 
-    public void StartReplay(GameObject player, List<TransformFrame> transformFrames, List<InteractionFrame> interactionFrames)
+    public void StartReplay(
+        GameObject player,
+        List<TransformFrame> transformFrames,
+        List<InteractionFrame> interactionFrames,
+        List<AnimationFrame> animationFrames // ✅ Add animation data
+    )
     {
         var cc = player.GetComponent<CharacterController>();
         var rb = player.GetComponent<Rigidbody>();
+        var animator = player.GetComponentInChildren<Animator>();
 
         if (cc) cc.enabled = false;
         if (rb) rb.isKinematic = true;
@@ -92,11 +112,17 @@ public class LoopReplayerSystem : MonoBehaviour
             player = player,
             transformFrames = transformFrames,
             interactionFrames = interactionFrames,
+            animationFrames = animationFrames, // ✅ Store animation frames
             startTime = Time.time,
             charController = cc,
-            rigidbody = rb
+            rigidbody = rb,
+            animator = animator, // ✅ Cache animator
+            transformIndex = 0,
+            interactionIndex = 0,
+            animationIndex = 0
         });
     }
+
 
     public void ClearReplays()
     {
@@ -108,4 +134,16 @@ public class LoopReplayerSystem : MonoBehaviour
 
         replays.Clear();
     }
+    public void ClearReplays(GameObject player)
+    {
+        var replay = replays.Find(r => r.player == player);
+        if (replay != null)
+        {
+            if (replay.charController) replay.charController.enabled = true;
+            if (replay.rigidbody) replay.rigidbody.isKinematic = false;
+
+            replays.Remove(replay);
+        }
+    }
+
 }

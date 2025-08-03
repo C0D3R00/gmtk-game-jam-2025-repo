@@ -1,4 +1,5 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using UnityEngine;
 
 public class LoopRecorderSystem : MonoBehaviour
@@ -13,6 +14,7 @@ public class LoopRecorderSystem : MonoBehaviour
 
     private readonly Dictionary<int, List<TransformFrame>> transformHistory = new();
     private readonly Dictionary<int, List<InteractionFrame>> interactionHistory = new();
+    private readonly Dictionary<int, List<AnimationFrame>> animationFrames = new();
 
     private void Awake()
     {
@@ -48,12 +50,23 @@ public class LoopRecorderSystem : MonoBehaviour
         startTime = Time.time;
         isRecording = true;
 
+        // ✅ Clear previous data
         if (!transformHistory.ContainsKey(playerIndex))
             transformHistory[playerIndex] = new();
+        else
+            transformHistory[playerIndex].Clear();
 
         if (!interactionHistory.ContainsKey(playerIndex))
             interactionHistory[playerIndex] = new();
+        else
+            interactionHistory[playerIndex].Clear();
+
+        if (!animationFrames.ContainsKey(playerIndex))
+            animationFrames[playerIndex] = new();
+        else
+            animationFrames[playerIndex].Clear();
     }
+
 
     public void StopRecording()
     {
@@ -62,6 +75,7 @@ public class LoopRecorderSystem : MonoBehaviour
 
     public void ClearAll()
     {
+        animationFrames.Clear();
         transformHistory.Clear();
         interactionHistory.Clear();
     }
@@ -82,10 +96,22 @@ public class LoopRecorderSystem : MonoBehaviour
             action
         ));
     }
+    public void RecordAnimation(int state)
+    {
+        if (!isRecording || !animationFrames.ContainsKey(activePlayerIndex)) return;
 
+        animationFrames[activePlayerIndex].Add(new AnimationFrame
+        {
+            timestamp = Time.time - startTime,
+            state = state
+        });
+    }
     public List<TransformFrame> GetTransformFrames(int playerIndex) =>
         transformHistory.TryGetValue(playerIndex, out var frames) ? new List<TransformFrame>(frames) : new();
 
     public List<InteractionFrame> GetInteractionFrames(int playerIndex) =>
         interactionHistory.TryGetValue(playerIndex, out var frames) ? new List<InteractionFrame>(frames) : new();
+
+    public List<AnimationFrame> GetAnimationFrames(int index) =>
+    animationFrames.ContainsKey(index) ? animationFrames[index] : new();
 }

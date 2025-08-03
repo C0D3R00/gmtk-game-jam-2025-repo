@@ -6,6 +6,7 @@ public class Switch : MonoBehaviour, IInteractable, IReplayable
     private ISwitchTarget[] targets;
 
     [SerializeField] private string promptText = "Toggle Switch";
+    private bool isOn = false;
 
     public string Id => gameObject.name;
 
@@ -31,7 +32,8 @@ public class Switch : MonoBehaviour, IInteractable, IReplayable
         // ✅ Use LoopRecorderSystem instead of PlayerRecorder
         if (LoopRecorderSystem.Instance != null)
         {
-            LoopRecorderSystem.Instance.RecordInteraction(Id, "toggle");
+            string action = isOn ? "on" : "off";
+            LoopRecorderSystem.Instance.RecordInteraction(Id, action);
         }
     }
 
@@ -39,7 +41,15 @@ public class Switch : MonoBehaviour, IInteractable, IReplayable
 
     public void ReplayAction(string action)
     {
-        if (action == "toggle")
+        if (action == "on")
+        {
+            SetState(true);
+        }
+        else if (action == "off")
+        {
+            SetState(false);
+        }
+        else if (action == "toggle") // optional fallback
         {
             Toggle();
         }
@@ -51,12 +61,19 @@ public class Switch : MonoBehaviour, IInteractable, IReplayable
 
     private void Toggle()
     {
+        SetState(!isOn);
+    }
+
+    private void SetState(bool on)
+    {
+        isOn = on;
+
         foreach (var target in targets)
         {
             if (target == null) continue;
 
-            // You could also check state here if needed
-            target.Activate(); // or target.Toggle() if supported
+            if (isOn) target.Activate();
+            else target.Deactivate();
         }
     }
 }

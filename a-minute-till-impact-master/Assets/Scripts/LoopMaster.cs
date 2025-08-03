@@ -93,10 +93,11 @@ public class LoopMaster : MonoBehaviour
 
                 var tf = LoopRecorderSystem.Instance.GetTransformFrames(i);
                 var ia = LoopRecorderSystem.Instance.GetInteractionFrames(i);
+                var af = LoopRecorderSystem.Instance.GetAnimationFrames(i); // ✅ get animation frames
 
-                if (tf.Count > 0 || ia.Count > 0)
+                if (tf.Count > 0 || ia.Count > 0 || af.Count > 0)
                 {
-                    LoopReplayerSystem.Instance.StartReplay(player.gameObject, tf, ia);
+                    LoopReplayerSystem.Instance.StartReplay(player.gameObject, tf, ia, af); // ✅ pass animation frames
                 }
             }
         }
