@@ -6,7 +6,7 @@ public class Switch : MonoBehaviour, IInteractable, IReplayable
     private ISwitchTarget[] targets;
 
     [SerializeField] private string promptText = "Toggle Switch";
-    private bool isOn = false;
+    private bool isOn = true;
 
     public string Id => gameObject.name;
 
