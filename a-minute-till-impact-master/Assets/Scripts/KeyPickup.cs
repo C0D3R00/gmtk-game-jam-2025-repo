@@ -17,17 +17,21 @@ public class KeyPickup : MonoBehaviour, IReplayable
             // Simulate pickup (e.g., hide from ghost player)
             gameObject.SetActive(false);
         }
+        else
+        {
+            Debug.LogWarning($"[KeyPickup] Unknown replay action: {action}");
+        }
     }
 
     public void OnInteract(GameObject player)
     {
-        // Normal interaction logic...
-        var recorder = player.GetComponent<PlayerRecorder>();
-        if (recorder != null && recorder.IsRecording)
+        // Record the interaction via LoopRecorderSystem
+        if (LoopRecorderSystem.Instance != null)
         {
-            recorder.RecordInteraction(Id, "pickup");
+            LoopRecorderSystem.Instance.RecordInteraction(Id, "pickup");
         }
 
+        // Simulate pickup (hide the key)
         gameObject.SetActive(false);
     }
 }

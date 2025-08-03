@@ -25,7 +25,7 @@ public class PlayerInteractor : MonoBehaviour
             if (hit.collider.TryGetComponent<IInteractable>(out var interactable))
             {
                 currentTarget = interactable;
-
+                //Debug.Log($"currentTarget: {currentTarget}");
                 SwitchPromptUI.Instance.ShowPrompt(true, currentTarget.GetPrompt());
 
                 if (Input.GetKeyDown(interactKey))

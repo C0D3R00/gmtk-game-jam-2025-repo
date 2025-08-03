@@ -9,14 +9,11 @@ public class LoopMaster : MonoBehaviour
 
     [Header("Loop Settings")]
     [SerializeField] private float loopDuration = 60f;
-    [SerializeField] private List<PlayerController> players; // Player1, Player2, Player3...
+    [SerializeField] private List<PlayerController> players;
     [SerializeField] private string cameraAnchorName = "CameraAnchor";
 
     [Header("Camera")]
     [SerializeField] private CinemachineVirtualCamera virtualCam;
-
-    private List<List<PlayerActionFrame>> frameHistory = new();
-    private List<List<PlayerInteractionEvent>> interactionHistory = new();
 
     private int currentLoop = 0;
     private float loopTimer;
@@ -40,7 +37,6 @@ public class LoopMaster : MonoBehaviour
     {
         mainCam = Camera.main;
 
-        // 🧠 Set initial checkpoints for all players
         foreach (var player in players)
         {
             player.SetCheckpoint();
@@ -75,31 +71,64 @@ public class LoopMaster : MonoBehaviour
 
         int activeIndex = currentLoop % players.Count;
 
+        LoopReplayerSystem.Instance.ClearReplays();
+        ResettableRegistry.ResetAll();
+
         for (int i = 0; i < players.Count; i++)
         {
             var player = players[i];
-
-            // 🧠 Reset player to saved checkpoint
             player.ResetToCheckpoint();
 
             if (i == activeIndex)
             {
-                Debug.Log($"▶️ Controlling: {player.name}");
                 player.EnableControl();
+                LoopRecorderSystem.Instance.StartRecording(i, player.gameObject);
+
                 SetActiveAudioListener(player);
                 MoveCameraToPlayer(player);
-            }
-            else if (i < frameHistory.Count)
-            {
-                var frames = frameHistory[i];
-                var events = interactionHistory[i];
-                player.StartReplay(frames, events);
             }
             else
             {
                 player.DisableAll();
+
+                var tf = LoopRecorderSystem.Instance.GetTransformFrames(i);
+                var ia = LoopRecorderSystem.Instance.GetInteractionFrames(i);
+
+                if (tf.Count > 0 || ia.Count > 0)
+                {
+                    LoopReplayerSystem.Instance.StartReplay(player.gameObject, tf, ia);
+                }
             }
         }
+    }
+
+    public void EndLoop()
+    {
+        loopRunning = false;
+
+        int activeIndex = currentLoop % players.Count;
+        var activePlayer = players[activeIndex];
+
+        activePlayer.DisableControl();
+        LoopRecorderSystem.Instance.StopRecording();
+        activePlayer.PrepareForNewLoop();
+
+        currentLoop++;
+
+        if (puzzleSolved)
+        {
+            Debug.Log("✅ Puzzle solved! Ending loop system.");
+            return;
+        }
+
+        StartCoroutine(RestartLoop());
+    }
+
+    private IEnumerator RestartLoop()
+    {
+        Debug.Log("💥 Boom! Restarting loop in 2s...");
+        yield return new WaitForSeconds(2f);
+        StartLoop();
     }
 
     private void MoveCameraToPlayer(PlayerController player)
@@ -131,40 +160,6 @@ public class LoopMaster : MonoBehaviour
             var listener = pc.GetComponentInChildren<AudioListener>();
             if (listener) listener.enabled = (pc == player);
         }
-    }
-
-    public void EndLoop()
-    {
-        loopRunning = false;
-
-        int activeIndex = currentLoop % players.Count;
-        var activePlayer = players[activeIndex];
-        var recorder = activePlayer.GetComponent<PlayerRecorder>();
-
-        activePlayer.DisableControl();
-        recorder.FinishRecording();
-
-        frameHistory.Add(new List<PlayerActionFrame>(recorder.recordedFrames));
-        interactionHistory.Add(new List<PlayerInteractionEvent>(recorder.interactionEvents));
-        recorder.ClearRecording();
-
-        currentLoop++;
-
-        if (puzzleSolved)
-        {
-            Debug.Log("✅ Puzzle solved! Ending loop system.");
-            return;
-        }
-
-        StartCoroutine(RestartLoop());
-    }
-
-    private IEnumerator RestartLoop()
-    {
-        Debug.Log("💥 Boom! Restarting loop in 2s...");
-        yield return new WaitForSeconds(2f);
-
-        StartLoop();
     }
 
     public void MarkPuzzleSolved()

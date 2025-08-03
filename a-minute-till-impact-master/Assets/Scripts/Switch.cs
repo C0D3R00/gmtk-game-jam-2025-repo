@@ -1,10 +1,9 @@
-using UnityEngine;
+﻿using UnityEngine;
 
 public class Switch : MonoBehaviour, IInteractable, IReplayable
 {
     [SerializeField] private MonoBehaviour[] targetBehaviours;
     private ISwitchTarget[] targets;
-    private bool isOn = false;
 
     [SerializeField] private string promptText = "Toggle Switch";
 
@@ -14,19 +13,25 @@ public class Switch : MonoBehaviour, IInteractable, IReplayable
     {
         targets = new ISwitchTarget[targetBehaviours.Length];
         for (int i = 0; i < targetBehaviours.Length; i++)
-            targets[i] = targetBehaviours[i] as ISwitchTarget;
+        {
+            if (targetBehaviours[i] is ISwitchTarget target)
+                targets[i] = target;
+            else
+                Debug.LogWarning($"{targetBehaviours[i].name} does not implement ISwitchTarget.");
+        }
 
         InteractableRegistry.Register(Id, this);
     }
 
     public void Interact(GameObject interactor)
     {
+        Debug.Log("Interact switch");
         Toggle();
 
-        var recorder = interactor.GetComponent<PlayerRecorder>();
-        if (recorder != null && recorder.IsRecording)
+        // ✅ Use LoopRecorderSystem instead of PlayerRecorder
+        if (LoopRecorderSystem.Instance != null)
         {
-            recorder.RecordInteraction(Id, isOn ? "on" : "off");
+            LoopRecorderSystem.Instance.RecordInteraction(Id, "toggle");
         }
     }
 
@@ -38,18 +43,20 @@ public class Switch : MonoBehaviour, IInteractable, IReplayable
         {
             Toggle();
         }
+        else
+        {
+            Debug.LogWarning($"[Switch] Unknown action: {action}");
+        }
     }
 
     private void Toggle()
     {
-        isOn = !isOn;
-
         foreach (var target in targets)
         {
             if (target == null) continue;
 
-            if (isOn) target.Activate();
-            else target.Deactivate();
+            // You could also check state here if needed
+            target.Activate(); // or target.Toggle() if supported
         }
     }
 }

@@ -1,55 +1,66 @@
 ﻿using StarterAssets;
 using System.Collections.Generic;
 using UnityEngine;
-using static TMPro.SpriteAssetUtilities.TexturePacker_JsonArray;
 
 public class PlayerReplayer : MonoBehaviour
 {
-    public CharacterController controller;
-    public FirstPersonController fpc;
+    private FirstPersonController fpc;
+    private StarterAssetsInputs _input;
+    private CharacterController controller;
 
     private List<PlayerActionFrame> frames;
     private List<PlayerInteractionEvent> events;
-
     private float currentTime;
     private int frameIndex;
     private int eventIndex;
 
+    private bool isReplaying = false;
+
+    private void Awake()
+    {
+        fpc = GetComponent<FirstPersonController>();
+        _input = GetComponent<StarterAssetsInputs>();
+        controller = GetComponent<CharacterController>();
+    }
+
     private void Update()
     {
-        if (frames == null || frames.Count == 0) return;
+        if (!isReplaying || frames == null || frameIndex >= frames.Count)
+            return;
 
         currentTime += Time.deltaTime;
 
+        // Process movement frames
         if (frameIndex < frames.Count && frames[frameIndex].time <= currentTime)
         {
+            var frame = frames[frameIndex];
+            Debug.Log($"🔁{this.name} Replay Frame #{frameIndex} @ {currentTime:F2}s | Move: {frame.moveInput}, Look: {frame.lookInput}");
 
-            Debug.Log($"🔁 {this.name} Replay Frame #{frameIndex} @ {currentTime:F2}s | Move: {frames[frameIndex].moveInput} Look: {frames[frameIndex].lookInput}");
-            ApplyMovement(frames[frameIndex]);
+            // Feed recorded input into StarterAssetsInputs
+            _input.move = frame.moveInput;
+            _input.look = frame.lookInput;
+            _input.jump = frame.jump;
+            //_input.interact = frame.interact;
+            //_input.crouch = frame.crouch;
+            _input.sprint = frame.sprint;
+
             frameIndex++;
         }
 
+        // Process interaction events
         while (eventIndex < events.Count && events[eventIndex].time <= currentTime)
         {
-            TriggerInteraction(events[eventIndex]);
+            var interaction = events[eventIndex];
+            Debug.Log($"🎬 Triggering interaction '{interaction.action}' on '{interaction.targetId}' at {interaction.time:F2}s");
+
+            TriggerInteraction(interaction);
             eventIndex++;
         }
     }
 
-    private void ApplyMovement(PlayerActionFrame frame)
-    {
-        Vector3 localInput = new Vector3(frame.moveInput.x, 0, frame.moveInput.y);
-        Vector3 worldInput = transform.TransformDirection(localInput);
-
-        float speed = fpc.MoveSpeed;
-        Vector3 deltaMove = worldInput * speed * Time.deltaTime;
-
-        controller.Move(deltaMove);
-    }
-
     private void TriggerInteraction(PlayerInteractionEvent interaction)
     {
-        var target = GameObject.Find(interaction.targetId);
+        GameObject target = GameObject.Find(interaction.targetId);
         if (target && target.TryGetComponent<IReplayable>(out var replayable))
         {
             replayable.ReplayAction(interaction.action);
@@ -59,34 +70,42 @@ public class PlayerReplayer : MonoBehaviour
     public void BeginPlayback(List<PlayerActionFrame> f, List<PlayerInteractionEvent> e)
     {
         frames = f;
-        events = e ?? new();
-
+        events = e ?? new List<PlayerInteractionEvent>();
         currentTime = 0f;
         frameIndex = 0;
         eventIndex = 0;
+        isReplaying = true;
 
-        if (frames[0].worldPosition.HasValue)
+        // Reset inputs
+        if (_input != null)
         {
-            controller.enabled = false;
-            transform.position = frames[0].worldPosition.Value;
-            transform.rotation = frames[0].worldRotation ?? Quaternion.identity;
-            controller.enabled = true;
+            _input.move = Vector2.zero;
+            _input.look = Vector2.zero;
+            _input.jump = false;
+            //_input.interact = false;
+            //_input.crouch = false;
+            _input.sprint = false;
         }
 
-        while (frameIndex < frames.Count &&
-               frames[frameIndex].moveInput == Vector2.zero &&
-               frames[frameIndex].lookInput == Vector2.zero)
+        fpc.EnableInput();
+        Debug.Log($"▶️ Replaying {frames.Count} frames from time 0");
+    }
+
+    public void StopReplay()
+    {
+        isReplaying = false;
+
+        // Reset inputs after replay
+        if (_input != null)
         {
-            Debug.Log($"⚠️ Skipping idle frame {frameIndex}");
-            frameIndex++;
+            _input.move = Vector2.zero;
+            _input.look = Vector2.zero;
+            _input.jump = false;
+            //_input.interact = false;
+            //_input.crouch = false;
+            _input.sprint = false;
         }
 
-        if (fpc)
-        {
-            fpc.enabled = false;
-            fpc.DisableInput();
-        }
-
-        Debug.Log($"▶️ Replay started at frame #{frameIndex}, total: {frames.Count}");
+        Debug.Log("⏹️ Replay finished.");
     }
 }
